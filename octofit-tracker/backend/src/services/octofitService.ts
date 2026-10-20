@@ -1,5 +1,6 @@
 import { Activity, Team, User, Workout } from '../models/index.js';
 
+
 export async function listActivities() {
   return Activity.find().lean();
 }
