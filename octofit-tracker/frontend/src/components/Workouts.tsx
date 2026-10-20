@@ -1,4 +1,33 @@
-import { CapabilityCard } from './CapabilityCard.js';
+import { useApiResource } from './useApiResource.js';
+
+type WorkoutSuggestion = {
+  _id?: string;
+  title?: string;
+  focus: string;
+  minutes: number;
+  difficulty: string;
+  reason: string;
+};
+
+type WorkoutsResponse = { suggestions: WorkoutSuggestion[] };
+
 export default function Workouts() {
-  return <CapabilityCard title="Workout suggestions" description="Recommend workouts from activity patterns." />;
+  const userEmail = 'mona@example.com';
+  const state = useApiResource<WorkoutsResponse>(`/api/workouts/suggestions/${encodeURIComponent(userEmail)}`);
+
+  return <section className="card h-100"><div className="card-body">
+    <h2 className="h4">Workout suggestions</h2>
+    <p>Recommend workouts from activity patterns.</p>
+    {state.status === 'loading' && <p role="status">Loading workout suggestions...</p>}
+    {state.status === 'error' && <p role="alert">Unable to load workout suggestions: {state.message}</p>}
+    {state.status === 'success' && (state.data.suggestions.length === 0
+      ? <p>No workout suggestions yet.</p>
+      : <ul className="list-group list-group-flush">{state.data.suggestions.map((suggestion, index) => (
+        <li className="list-group-item px-0" key={suggestion._id ?? `${suggestion.title ?? 'workout'}-${index}`}>
+          <h3 className="h6 mb-1">{suggestion.title ?? 'Workout'} · {suggestion.focus}</h3>
+          <p className="mb-1">{suggestion.minutes} minutes · {suggestion.difficulty}</p>
+          <p className="mb-0 text-body-secondary">{suggestion.reason}</p>
+        </li>
+      ))}</ul>)}
+  </div></section>;
 }
