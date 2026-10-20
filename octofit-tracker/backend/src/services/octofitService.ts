@@ -9,15 +9,17 @@ function requestError(status: number, message: string) {
   return Object.assign(new Error(message), { status });
 }
 
+function isObjectId(value: unknown): value is string {
+  return typeof value === 'string' && /^[a-f\d]{24}$/i.test(value);
+}
+
 export async function createActivity(input: unknown) {
   if (typeof input !== 'object' || input === null || Array.isArray(input)) {
     throw requestError(400, 'Activity input must be an object');
   }
 
   const { userId, teamId, type, minutes } = input as Record<string, unknown>;
-  const objectIdPattern = /^[a-f\d]{24}$/i;
-  if (typeof userId !== 'string' || !objectIdPattern.test(userId)
-    || typeof teamId !== 'string' || !objectIdPattern.test(teamId)) {
+  if (!isObjectId(userId) || !isObjectId(teamId)) {
     throw requestError(400, 'Valid userId and teamId are required');
   }
   if (typeof type !== 'string' || type.trim().length === 0
@@ -63,12 +65,11 @@ export async function createTeam(input: unknown) {
   }
 
   const memberIds = (members ?? []) as unknown[];
-  const objectIdPattern = /^[a-f\d]{24}$/i;
-  if (!memberIds.every((memberId) => typeof memberId === 'string' && objectIdPattern.test(memberId))) {
+  if (!memberIds.every(isObjectId)) {
     throw requestError(400, 'Team member IDs must be valid');
   }
 
-  const uniqueMemberIds = [...new Set(memberIds as string[])];
+  const uniqueMemberIds = [...new Set(memberIds)];
   if (uniqueMemberIds.length > 0) {
     const existingMembers = await User.countDocuments({ _id: { $in: uniqueMemberIds } });
     if (existingMembers !== uniqueMemberIds.length) {
