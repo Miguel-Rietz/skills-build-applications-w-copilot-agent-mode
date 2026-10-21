@@ -11,7 +11,10 @@ type Team = {
 type TeamsResponse = { teams: Team[] };
 
 export default function Teams() {
-  const state = useApiResource<TeamsResponse>(apiPaths.teams, getJson);
+  const state = useApiResource<TeamsResponse>(
+    apiPaths.teams,
+    () => getJson<TeamsResponse>(apiPaths.teams),
+  );
 
   return <section className="card h-100"><div className="card-body">
     <h2 className="h4">Teams</h2>

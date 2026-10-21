@@ -14,7 +14,11 @@ type WorkoutsResponse = { suggestions: WorkoutSuggestion[] };
 
 export default function Workouts() {
   const userEmail = 'mona@example.com';
-  const state = useApiResource<WorkoutsResponse>(apiPaths.workoutSuggestions(userEmail), getJson);
+  const requestPath = apiPaths.workoutSuggestions(userEmail);
+  const state = useApiResource<WorkoutsResponse>(
+    requestPath,
+    () => getJson<WorkoutsResponse>(requestPath),
+  );
 
   return <section className="card h-100"><div className="card-body">
     <h2 className="h4">Workout suggestions</h2>

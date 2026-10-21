@@ -5,16 +5,14 @@ type ResourceState<T> =
   | { status: 'success'; data: T }
   | { status: 'error'; message: string };
 
-type JsonRequest = <T>(path: string) => Promise<T>;
-
-export function useApiResource<T>(path: string, request: JsonRequest): ResourceState<T> {
+export function useApiResource<T>(resourceKey: string, load: () => Promise<T>): ResourceState<T> {
   const [state, setState] = useState<ResourceState<T>>({ status: 'loading' });
 
   useEffect(() => {
     let active = true;
     setState({ status: 'loading' });
 
-    request<T>(path)
+    load()
       .then((data) => {
         if (active) setState({ status: 'success', data });
       })
@@ -30,7 +28,7 @@ export function useApiResource<T>(path: string, request: JsonRequest): ResourceS
     return () => {
       active = false;
     };
-  }, [path, request]);
+  }, [resourceKey]);
 
   return state;
 }
