@@ -1,5 +1,5 @@
 import { useApiResource } from './useApiResource.js';
-import { apiPaths } from '../api/client.js';
+import { apiPaths, getJson } from '../api/client.js';
 
 type Team = {
   _id?: string;
@@ -11,7 +11,7 @@ type Team = {
 type TeamsResponse = { teams: Team[] };
 
 export default function Teams() {
-  const state = useApiResource<TeamsResponse>(apiPaths.teams);
+  const state = useApiResource<TeamsResponse>(apiPaths.teams, getJson);
 
   return <section className="card h-100"><div className="card-body">
     <h2 className="h4">Teams</h2>

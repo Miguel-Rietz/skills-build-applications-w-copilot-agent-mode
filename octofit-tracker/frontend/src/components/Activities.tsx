@@ -1,5 +1,5 @@
 import { useApiResource } from './useApiResource.js';
-import { apiPaths } from '../api/client.js';
+import { apiPaths, getJson } from '../api/client.js';
 
 type Activity = {
   _id?: string;
@@ -11,7 +11,7 @@ type Activity = {
 type ActivitiesResponse = { activities: Activity[] };
 
 export default function Activities() {
-  const state = useApiResource<ActivitiesResponse>(apiPaths.activities);
+  const state = useApiResource<ActivitiesResponse>(apiPaths.activities, getJson);
 
   return <section className="card h-100"><div className="card-body">
     <h2 className="h4">Activities</h2>
