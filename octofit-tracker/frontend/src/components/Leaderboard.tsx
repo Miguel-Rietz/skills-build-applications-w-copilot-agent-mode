@@ -1,4 +1,5 @@
 import { useApiResource } from './useApiResource.js';
+import { apiPaths } from '../api/client.js';
 
 type LeaderboardEntry = {
   teamName: string;
@@ -9,7 +10,7 @@ type LeaderboardEntry = {
 type LeaderboardResponse = { leaderboard: LeaderboardEntry[] };
 
 export default function Leaderboard() {
-  const state = useApiResource<LeaderboardResponse>('/api/leaderboard');
+  const state = useApiResource<LeaderboardResponse>(apiPaths.leaderboard);
 
   return <section className="card h-100"><div className="card-body">
     <h2 className="h4">Leaderboard</h2>
